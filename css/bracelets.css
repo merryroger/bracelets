@@ -393,8 +393,9 @@ body {
 /*** end of review-controls ***/
 
 .backtop.container {
-  position: relative;
-  width: calc(100vw - 100px);
+  position: fixed;
+  right: 50px;
+  bottom: 0;
 }
 
 .up {
@@ -410,4 +411,9 @@ body {
   border-width: 0;
   border-radius: 20px;
   box-shadow: 0 12px 20px rgba(0, 0, 0, .12);
+  background-color: var(--bracelets-bgr-clr);
+}
+
+.up:active {
+  box-shadow: none;
 }
