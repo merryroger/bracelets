@@ -1,0 +1,190 @@
+@media (max-width: 1380px) {
+  .review-model-pad {
+    justify-content: flex-start;
+    padding-left: 50px;
+  }
+
+  .review-model-frame {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .review-model-band {
+    position: absolute;
+    width: auto;
+  }
+}
+
+@media (max-width: 1330px) {
+  .review-model-frame {
+    margin-bottom: 0;
+  }
+
+  .review-band-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 16px;
+  }
+}
+
+@media (max-width: 1108px) {
+  .title {
+    flex-direction: column;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    row-gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .instructions h2.headers {
+    font-size: 50px;
+    line-height: 60px;
+  }
+
+  /*** Header section ***/
+
+  .header {
+    margin-bottom: 50px;
+  }
+
+  .header .container {
+    justify-content: center;
+  }
+
+  /*** Main:review ***/
+
+  .review_header {
+    margin-bottom: 60px;
+    font-size: 70px;
+    line-height: 80px;
+  }
+
+  .review-model-frame {
+    min-height: 330px;
+  }
+
+  .review-model-band {
+    height: 330px;
+    flex-wrap: nowrap;
+    column-gap: 12px;
+  }
+
+  .model-card {
+    padding: 0 30px;
+    display: flex;
+    width: 330px;
+    min-width: 330px;
+    height: 330px;
+  }
+
+  .device-name {
+    margin-bottom: 4px;
+    font-size: 30px;
+    line-height: 41px;
+  }
+
+  .device-app {
+    font-size: 22px;
+    line-height: 30px;
+  }
+
+  .device_img {
+    flex-basis: 207px;
+  }
+
+  .device_img.zepplife {
+    background-image: url("/images/devices/zepplife_154.jpg");
+  }
+
+  .device_img.zepp {
+    background-image: url("/images/devices/zepp_154.jpg");
+  }
+
+  .device_img.googlefit {
+    background-image: url("/images/devices/googlefit_154.jpg");
+  }
+
+  .device_img.fitbit {
+    background-image: url("/images/devices/fitbit_154.jpg");
+  }
+
+  .device_img.lg {
+    background-image: url("/images/devices/lg_154.jpg");
+  }
+
+  .device_img.huawei {
+    background-image: url("/images/devices/huawei_154.jpg");
+  }
+
+  .device_img.samsung {
+    background-image: url("/images/devices/samsung_154.jpg");
+  }
+
+  .device_img.garmin {
+    background-image: url("/images/devices/garmin_154.jpg");
+  }
+
+  .device_img.polar {
+    background-image: url("/images/devices/polar_154.jpg");
+  }
+}
+
+@media (max-width: 674px) {
+  .instructions h2.headers {
+    font-size: 34px;
+    line-height: 42px;
+  }
+
+  .instructions h3.instruction-cases {
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .instructions h5.instruction-comment {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  /*** Main:review ***/
+
+  .review_header {
+    margin-bottom: 60px;
+    font-size: 34px;
+    line-height: 50px;
+  }
+
+  .review-model-frame {
+    min-height: 240px;
+  }
+
+  .review-model-band {
+    height: 240px;
+  }
+
+  .model-card {
+    padding: 0;
+    width: 240px;
+    min-width: 240px;
+    height: 240px;
+  }
+
+  .device_img {
+    flex-basis: 171px;
+    background-size: 50% auto;
+  }
+
+  .device-name {
+    margin-bottom: 2px;
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .device-app {
+    font-size: 14px;
+    line-height: 19px;
+  }
+
+}
