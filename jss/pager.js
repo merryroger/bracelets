@@ -120,11 +120,12 @@ const Pager = class ObjectPager {
   _resetBand() {
     const input = this._settings.ctrlDock.querySelectorAll('input')[0];
     input.checked = true;
-
     this._settings.band.style.setProperty('transform', `translateX(0)`);
   }
 
   _reSized() {
+    this._settings.band.style.setProperty('transform', `translateX(0)`);
+
     if (this._toh !== 0) {
       clearTimeout(this._toh);
       this._toh = 0;
