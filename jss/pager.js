@@ -57,6 +57,8 @@ const Pager = class ObjectPager {
     const movesNeeded = this._parameters.movesNeeded = Math.ceil(rowMaxCapacity / itemsPerScreen);
     this._rebuildControls(movesNeeded);
     this._toh = 0;
+    const rst = this._resetBand.bind(this);
+    window.addEventListener('resize', rst, { once: true });
   }
 
   _rebuildControls(cnt) {
@@ -124,14 +126,12 @@ const Pager = class ObjectPager {
   }
 
   _reSized() {
-    this._settings.band.style.setProperty('transform', `translateX(0)`);
-
     if (this._toh !== 0) {
       clearTimeout(this._toh);
       this._toh = 0;
     }
 
-    this._toh = setTimeout(this._recalc, 500);
+    this._toh = setTimeout(this._recalc, 300);
   }
 
 }
