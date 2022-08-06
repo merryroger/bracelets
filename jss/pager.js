@@ -12,6 +12,7 @@ const Pager = class ObjectPager {
     band: null,
     ctrlDock: null,
     items: [],
+    swipSpotLr: null,
     rightEdge: 15,
     append: () => { return {} },
     keydown: (e) => { },
@@ -31,11 +32,18 @@ const Pager = class ObjectPager {
 
   constructor(settings = {}) {
     this._toh = 0;
+    this._swipping = false;
+    this._swiX = 0;
+    this._swiY = 0;
     this._setUp(settings);
     this._move = this._doMove.bind(this);
     this._resized = this._reSized.bind(this);
     this._recalc = this._reCalcAfterResize.bind(this);
     this._keydown = this._settings.keydown.bind(this, [this._move]);
+//    this._ptrdn = this._pointerDown.bind(this);
+//    this._ptrmv = this._pointerMove.bind(this);
+//    this._ptrup = this._pointerUp.bind(this);
+//    this._cardclk = this._cardClick.bind(this);
     this._hangListeners();
     this._resetBand();
     this._reCalcSizes();
@@ -118,6 +126,10 @@ const Pager = class ObjectPager {
       control.addEventListener('keydown', this._keydown);
     })
 
+//    this._settings.band.addEventListener('pointerdown', this._ptrdn);
+//    document.body.addEventListener('pointermove', this._ptrmv);
+//    document.body.addEventListener('pointerup', this._ptrup);
+//    this._settings.band.addEventListener('click', this._cardclk);
     window.addEventListener('resize', this._resized);
   }
 
@@ -177,7 +189,41 @@ const Pager = class ObjectPager {
 
     this._toh = setTimeout(this._recalc, 300);
   }
+/*
+  _pointerDown(e) {
+    if (e.target.closest('#review-model-band') !== null) {
+      e.preventDefault();
+      this._swipping = true;
+      this._swiX = e.clientX - +getComputedStyle(this._settings.band).transform.split(', ')[4];
+      this._settings.band.style.setProperty('transition', 'transform 0s linear');
+      //e.stopImmediatePropagation();
+    }
+  }
 
+  _pointerMove(e) {
+    if (this._swipping) {
+      const dX = e.clientX - this._swiX;
+      this._settings.band.style.setProperty('transform', `translateX(${dX}px)`);
+    }
+  }
+
+  _pointerUp(e) {
+    if (this._swipping) {
+      e.preventDefault();
+      this._settings.band.style.setProperty('transition', 'transform .5s ease-in-out');
+      this._parameters.shift = +getComputedStyle(this._settings.band).transform.split(', ')[4];
+      this._swipping = false;
+    }
+  }
+
+  _cardClick(e) {
+    //if (this._swipping) {
+      //e.preventDefault();
+      //e.stopImmediatePropagation();
+      //return false;
+    //}
+  }
+*/
 }
 
 export default Pager;
