@@ -1,8 +1,8 @@
 /**
  * The Object Pager JavaScript library
- * version 0.1.0
+ * version 0.1.1
  * © 2022 Ehwaz Raido
- * 05/Aug/2022
+ * 05/Aug/2022 .. 06/Aug/2022
  */
 
 const Pager = class ObjectPager {
@@ -18,6 +18,7 @@ const Pager = class ObjectPager {
   }
 
   _parameters = {
+    ctrlDockWidth: 0,
     itemRect: {},
     frameRect: {},
     bandRect: null,
@@ -25,16 +26,18 @@ const Pager = class ObjectPager {
     moveLength: 1,
     itemsPerScreen: 1,
     movesNeeded: 0,
+    shift: 0,
   }
 
   constructor(settings = {}) {
     this._toh = 0;
+    this._setUp(settings);
     this._move = this._doMove.bind(this);
     this._resized = this._reSized.bind(this);
-    this._recalc = this._reCalcSizes.bind(this);
-    this._setUp(settings);
+    this._recalc = this._reCalcAfterResize.bind(this);
     this._keydown = this._settings.keydown.bind(this, [this._move]);
     this._hangListeners();
+    this._resetBand();
     this._reCalcSizes();
   }
 
@@ -45,20 +48,19 @@ const Pager = class ObjectPager {
   }
 
   _reCalcSizes() {
-    this._resetBand();
+    this._parameters.ctrlDockWidth = this._settings.ctrlDock.offsetWidth;
     const itemRect = this._settings.items[0].getBoundingClientRect();
     const frameRect = this._parameters.frameRect = this._settings.frameDock.getBoundingClientRect();
     const bandRect = this._parameters.bandRect = this._settings.band.getBoundingClientRect();
-    const rows = Math.floor(bandRect.height / itemRect.height);
+    let rows = Math.floor(bandRect.height / itemRect.height);
+    rows = (rows == 0) ? 1 : rows;
     const rowMaxCapacity = Math.ceil(this._settings.items.length / rows);
-    const gap = this._parameters.gap = Math.floor((bandRect.width - itemRect.width * rowMaxCapacity) / (rowMaxCapacity - 1));
+    const gap = (rowMaxCapacity < 2) ? 0 : this._parameters.gap = Math.floor((bandRect.width - itemRect.width * rowMaxCapacity) / (rowMaxCapacity - 1));
     const moveLength = this._parameters.moveLength = itemRect.width + gap;
     const itemsPerScreen = this._parameters.itemsPerScreen = Math.floor((frameRect.width + gap) / moveLength);
     const movesNeeded = this._parameters.movesNeeded = Math.ceil(rowMaxCapacity / itemsPerScreen);
     this._rebuildControls(movesNeeded);
     this._toh = 0;
-    const rst = this._resetBand.bind(this);
-    window.addEventListener('resize', rst, { once: true });
   }
 
   _rebuildControls(cnt) {
@@ -80,7 +82,7 @@ const Pager = class ObjectPager {
     const newCtrls = [];
     for (let i = controls.length; i < upTo; i++) {
       let ctrl = this._settings.append(i + 1);
-      ctrl.control.addEventListener('pointerdown', this._move);
+      ctrl.control.addEventListener('change', this._move);
       ctrl.container.addEventListener('keydown', this._keydown);
       ctrl.container.append(ctrl.control);
       newCtrls.push(ctrl.container);
@@ -93,7 +95,7 @@ const Pager = class ObjectPager {
     const trash = controls.splice(downTo);
     trash.forEach((elem) => {
       elem.removeEventListener('keydown', this._keydown);
-      elem.querySelector('input').removeEventListener('pointerdown', this._move);
+      elem.querySelector('input').removeEventListener('change', this._move);
       elem = null;
     });
 
@@ -103,8 +105,8 @@ const Pager = class ObjectPager {
   _doMove(e) {
     const treck = this._parameters.moveLength * this._parameters.itemsPerScreen;
     let dX = -1 * (e.target.value - 1) * treck;
-    dX = (dX + this._parameters.bandRect.right + this._settings.rightEdge < this._parameters.frameRect.right) ?
-      this._parameters.frameRect.right - this._parameters.bandRect.right - this._settings.rightEdge :
+    dX = (dX + this._parameters.bandRect.right + this._settings.rightEdge - this._parameters.shift < this._parameters.frameRect.right) ?
+      this._parameters.frameRect.right - this._parameters.bandRect.right - this._settings.rightEdge + this._parameters.shift :
       dX;
     this._settings.band.style.setProperty('transform', `translateX(${dX}px)`);
   }
@@ -112,7 +114,7 @@ const Pager = class ObjectPager {
   _hangListeners() {
     const controls = Array.from(this._settings.ctrlDock.querySelectorAll('label'));
     controls.forEach((control) => {
-      control.querySelector('input').addEventListener('pointerdown', this._move);
+      control.querySelector('input').addEventListener('change', this._move);
       control.addEventListener('keydown', this._keydown);
     })
 
@@ -123,6 +125,48 @@ const Pager = class ObjectPager {
     const input = this._settings.ctrlDock.querySelectorAll('input')[0];
     input.checked = true;
     this._settings.band.style.setProperty('transform', `translateX(0)`);
+  }
+
+  _getCardAtLeftPosition(cv) {
+    return (cv == 1) ? 1 :
+      (cv == this._parameters.movesNeeded) ? this._settings.items.length :
+        (cv - 1) * this._parameters.itemsPerScreen + 1;
+  }
+
+  _getFocusedCardNum() {
+    let cardNum = 0;
+    const focused = document.querySelector(":focus");
+    this._settings.items.forEach((item, index) => {
+      if (item === focused) {
+        cardNum = index + 1;
+      }
+    });
+
+    return cardNum;
+  }
+
+  _getCurrentPageValue() {
+    const pn = this._settings.ctrlDock['review-page'].value;
+    const input = this._settings.ctrlDock.querySelectorAll('input')[pn - 1];
+    input.closest('label').blur();
+
+    return pn;
+  }
+  _reCalcAfterResize() {
+    if (this._parameters.ctrlDockWidth != this._settings.ctrlDock.offsetWidth) {
+      let cv = this._getCurrentPageValue();
+      let atLeftEdge = this._getCardAtLeftPosition(cv);
+      const focusedCard = this._getFocusedCardNum();
+      this._parameters.shift = +getComputedStyle(this._settings.band).transform.split(', ')[4];
+
+      this._reCalcSizes();
+
+      atLeftEdge = (focusedCard && (focusedCard - atLeftEdge) >= this._parameters.itemsPerScreen) ? focusedCard : atLeftEdge;
+      cv = Math.floor((atLeftEdge - 1) / this._parameters.itemsPerScreen);
+      const input = this._settings.ctrlDock.querySelectorAll('input')[cv];
+      input.checked = true;
+      this._doMove({ target: input });
+    }
   }
 
   _reSized() {

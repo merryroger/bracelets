@@ -18,6 +18,12 @@
 @media (max-width: 1330px) {
   .review-model-frame {
     margin-bottom: 0;
+    min-height: 240px;
+  }
+
+  .review-model-band {
+    height: 240px;
+    flex-wrap: nowrap;
   }
 
   .review-band-controls {
@@ -26,15 +32,17 @@
     align-items: center;
     column-gap: 16px;
   }
-}
 
-@media (max-width: 1108px) {
   .title {
     flex-direction: column;
     align-items: flex-start;
     flex-wrap: wrap;
     row-gap: 30px;
   }
+}
+
+@media (max-width: 1108px) {
+
 }
 
 @media (max-width: 768px) {
@@ -67,7 +75,6 @@
 
   .review-model-band {
     height: 330px;
-    flex-wrap: nowrap;
     column-gap: 12px;
   }
 

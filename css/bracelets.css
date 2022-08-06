@@ -368,6 +368,7 @@ body {
   -moz-appearance: initial;
   width: 18px;
   height: 18px;
+  border-radius: 100%;
   z-index: 0;
   visibility: hidden;
 }
