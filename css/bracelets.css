@@ -354,13 +354,7 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 100%;
-  outline-offset: 2px;
   outline: none;
-}
-
-.review-control-label:focus,
-.review-control-label:active {
-  outline: 2px solid var(--bracelets-link-clr);
 }
 
 .review-control[type="radio"] {
@@ -376,8 +370,6 @@ body {
 .review-control[type="radio"]::after {
   position: absolute;
   content: "";
-  top: -3px;
-  left: -5px;
   width: 18px;
   height: 18px;
   border-radius: 100%;
@@ -391,12 +383,18 @@ body {
   background-color: var(--bracelets-link-clr);
 }
 
+.review-control-label:focus .review-control[type="radio"]::after,
+.review-control-label:active .review-control[type="radio"]::after {
+  outline: 2px solid var(--bracelets-link-clr);
+  outline-offset: 2px;
+}
+
 /*** end of review-controls ***/
 
 .backtop.container {
   position: fixed;
   right: 50px;
-  bottom: 0;
+  bottom: -30px;
 }
 
 .up {
@@ -417,4 +415,16 @@ body {
 
 .up:active {
   box-shadow: none;
+}
+
+#swip-spot-layer {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(15, 185, 189, .5);
+}
+
+.off {
+  display: none;
+  z-index: -1;
 }
