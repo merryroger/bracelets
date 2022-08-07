@@ -135,6 +135,12 @@
 }
 
 @media (max-width: 674px) {
+  /*** Header section ***/
+
+  .header {
+    margin-bottom: 25px;
+  }
+
   .instructions h2.headers {
     font-size: 34px;
     line-height: 42px;
@@ -154,9 +160,10 @@
   /*** Main:review ***/
 
   .review_header {
-    margin-bottom: 60px;
-    font-size: 34px;
-    line-height: 50px;
+    margin-bottom: 40px;
+    font-size: 37px;
+    line-height: 42px;
+    text-align: center;
   }
 
   .review-model-frame {
