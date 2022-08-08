@@ -64,7 +64,7 @@
     font-size: 70px;
     line-height: 80px;
   }
-
+/*
   .review-model-frame {
     min-height: 330px;
   }
@@ -131,7 +131,7 @@
 
   .device_img.polar {
     background-image: url("/images/devices/polar_154.jpg");
-  }
+  }*/
 }
 
 @media (max-width: 674px) {
@@ -139,6 +139,10 @@
 
   .header {
     margin-bottom: 25px;
+  }
+
+  .review_header {
+    text-align: center;
   }
 
   .instructions h2.headers {
@@ -161,9 +165,8 @@
 
   .review_header {
     margin-bottom: 40px;
-    font-size: 37px;
-    line-height: 42px;
-    text-align: center;
+    font-size: calc(37 * 100vw / 450);
+    line-height: calc(42 * 100vw / 450);
   }
 
   .review-model-frame {
