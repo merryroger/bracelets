@@ -39,6 +39,15 @@ const Pager = class ObjectPager {
     this._moving = false;
     this._focused = null;
     this._swiX = 0;
+    this._swipInfo = {
+      dir: 10,
+      lastX: 0,
+      reset: (x) => { this._swipInfo.dir = 0; this._swipInfo.lastX = x },
+      update: (x) => {
+        this._swipInfo.dir = (x == this._swipInfo.lastX.x) ? 0 : ((x < this._swipInfo.lastX) ? 1 : -1),
+          this._swipInfo.lastX = x
+      },
+    };
     this._setUp(settings);
     this._move = this._doMove.bind(this);
     this._resized = this._reSized.bind(this);
@@ -142,18 +151,22 @@ const Pager = class ObjectPager {
     document.addEventListener('touchstart', (e) => {
       if (this._parameters.movesNeeded > 1 && e.target.closest('#review-model-band')) {
         this._swipping = true;
-        e.preventDefault();
         e.stopPropagation();
+        e.preventDefault();
         this._ptrdn({ target: e.target, clientX: e.changedTouches[0].pageX });
       }
-    });
+    }, { passive: false });
     document.addEventListener('touchmove', (e) => {
       if (this._swipping) {
+        this._ptrmv({ clientX: e.changedTouches[0].pageX });
         e.preventDefault();
         e.stopPropagation();
-        this._ptrmv({ clientX: e.changedTouches[0].pageX });
+        if (e.originalEvent) {
+          e.originalEvent.preventDefault();
+          e.originalEvent.stopPropagation();
+        }
       }
-    });
+    }, { passive: false });
     document.addEventListener('touchend', (e) => {
       if (this._swipping) {
         this._ptrup({ clientX: e.changedTouches[0].pageX });
@@ -248,6 +261,7 @@ const Pager = class ObjectPager {
     } else if (lastShift + this._parameters.bandRect.width < this._parameters.frameRect.right) {
       cv = this._settings.items.length - 1;
     } else {
+      lastShift -= ((this._swipInfo.dir == -1)) ? 0 : this._parameters.frameRect.width - this._parameters.itemsPerScreen * this._parameters.moveLength;
       cv = Math.round(-lastShift / this._parameters.moveLength);
       atEdge = false;
     }
@@ -256,9 +270,12 @@ const Pager = class ObjectPager {
     input.checked = true;
     if (atEdge) {
       this._doMove({ target: input });
-    } else {
+    } else if (this._swipInfo.dir == -1) {
       this._settings.band.style.setProperty('transform', `translateX(-${(cv * this._parameters.moveLength)}px)`);
+    } else {
+      this._settings.band.style.setProperty('transform', `translateX(-${(cv + this._parameters.itemsPerScreen) * this._parameters.moveLength - this._parameters.frameRect.width - this._parameters.gap + this._settings.rightEdge}px)`);
     }
+
     this._tmh = setTimeout(this._trend, 110);
   }
 
@@ -273,6 +290,7 @@ const Pager = class ObjectPager {
 
   _pointerDown(e) {
     this._swiX = e.clientX - +getComputedStyle(this._settings.band).transform.split(', ')[4];
+    this._swipInfo.reset(e.clientX);
     this._settings.band.style.setProperty('transition', 'transform 0s linear');
     this._focused = e.target.closest('.model-card');
   }
@@ -280,6 +298,7 @@ const Pager = class ObjectPager {
   _pointerMove(e) {
     clearTimeout(this._tmh);
     const dX = e.clientX - this._swiX;
+    this._swipInfo.update(e.clientX);
     this._settings.band.style.setProperty('transform', `translateX(${dX}px)`);
   }
 
