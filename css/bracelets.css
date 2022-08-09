@@ -224,7 +224,7 @@ body {
 /*** Main:review ***/
 
 .review_header {
-  margin-bottom: 46px;
+  margin-bottom: 26px;
   font-size: 60px;
   line-height: 82px;
 }
@@ -232,6 +232,7 @@ body {
 .review-model-pad {
   position: relative;
   display: flex;
+  padding-top: 20px;
   flex-direction: column;
   left: 50%;
   width: calc(100vw);
@@ -405,7 +406,7 @@ body {
   padding: 25px;
   width: 70px;
   height: 70px;
-  right: 25px;
+  right: 15px;
   text-align: center;
   vertical-align: middle;
   border-width: 0;
@@ -439,6 +440,6 @@ body {
 
 @media (orientation: portrait) {
   .up {
-    top: calc(100vh - 200px);
+    top: calc(100vh - 220px);
   }
 }
