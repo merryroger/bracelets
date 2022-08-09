@@ -155,16 +155,17 @@ const Pager = class ObjectPager {
         e.preventDefault();
         this._ptrdn({ target: e.target, clientX: e.changedTouches[0].pageX });
       }
-    }, { passive: false });
+    });
     document.addEventListener('touchmove', (e) => {
       if (this._swipping) {
-        this._ptrmv({ clientX: e.changedTouches[0].pageX });
+
         e.preventDefault();
         e.stopPropagation();
-        if (e.originalEvent) {
+        /*if (e.originalEvent) {
           e.originalEvent.preventDefault();
           e.originalEvent.stopPropagation();
-        }
+        }*/
+        this._ptrmv({ clientX: e.changedTouches[0].pageX });
       }
     }, { passive: false });
     document.addEventListener('touchend', (e) => {

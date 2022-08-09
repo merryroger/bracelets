@@ -141,10 +141,6 @@
     margin-bottom: 25px;
   }
 
-  .review_header {
-    text-align: center;
-  }
-
   .instructions h2.headers {
     font-size: 34px;
     line-height: 42px;
@@ -165,8 +161,9 @@
 
   .review_header {
     margin-bottom: 40px;
-    font-size: calc(37 * 100vw / 450);
-    line-height: calc(42 * 100vw / 450);
+    text-align: center;
+    font-size: calc(37 * 100vw / 470);
+    line-height: calc(42 * 100vw / 470);
   }
 
   .review-model-frame {
