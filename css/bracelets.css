@@ -436,6 +436,10 @@ body {
   .up {
     top: calc(100vh - 130px);
   }
+
+  .up:focus {
+    outline: 2px solid var(--bracelets-lt-txt-clr);
+  }
 }
 
 @media (orientation: portrait) {
