@@ -1,8 +1,8 @@
 /**
  * The Object Pager JavaScript library
- * version 0.1.2
+ * version 0.1.4
  * © 2022 Ehwaz Raido
- * 05/Aug/2022 .. 07/Aug/2022
+ * 05/Aug/2022 .. 10/Aug/2022
  */
 
 const Pager = class ObjectPager {
@@ -58,6 +58,7 @@ const Pager = class ObjectPager {
     this._ptrup = this._pointerUp.bind(this);
     this._cardclk = this._cardClick.bind(this);
     this._trend = this._transitionEnd.bind(this);
+    this._focbytab = this._focusCardsByTab.bind(this);
     this._hangListeners();
     this._resetBand();
     this._reCalcSizes();
@@ -137,12 +138,13 @@ const Pager = class ObjectPager {
     const controls = Array.from(this._settings.ctrlDock.querySelectorAll('label'));
     controls.forEach((control) => {
       control.querySelector('input').addEventListener('change', this._move);
-      control.addEventListener('keydown', this._keydown);
-    })
+      control.addEventListener('keydown', this._keydown), { capture: true, passive: false };
+    });
 
     this._hangTouchHandleListeners();
     this._hangMouseHandleListeners();
 
+    this._settings.frameDock.addEventListener('keyup', this._focbytab);
     this._settings.band.addEventListener('click', this._cardclk);
     window.addEventListener('resize', this._resized);
   }
@@ -158,13 +160,8 @@ const Pager = class ObjectPager {
     });
     document.addEventListener('touchmove', (e) => {
       if (this._swipping) {
-
         e.preventDefault();
         e.stopPropagation();
-        /*if (e.originalEvent) {
-          e.originalEvent.preventDefault();
-          e.originalEvent.stopPropagation();
-        }*/
         this._ptrmv({ clientX: e.changedTouches[0].pageX });
       }
     }, { passive: false });
@@ -271,13 +268,19 @@ const Pager = class ObjectPager {
     input.checked = true;
     if (atEdge) {
       this._doMove({ target: input });
-    } else if (this._swipInfo.dir == -1) {
+    } else {
+      this._cardSelect(cv);
+    }
+
+    this._tmh = setTimeout(this._trend, 110);
+  }
+
+  _cardSelect(cv) {
+    if (this._swipInfo.dir == -1) {
       this._settings.band.style.setProperty('transform', `translateX(-${(cv * this._parameters.moveLength)}px)`);
     } else {
       this._settings.band.style.setProperty('transform', `translateX(-${(cv + this._parameters.itemsPerScreen) * this._parameters.moveLength - this._parameters.frameRect.width - this._parameters.gap + this._settings.rightEdge}px)`);
     }
-
-    this._tmh = setTimeout(this._trend, 110);
   }
 
   _reSized() {
@@ -318,6 +321,48 @@ const Pager = class ObjectPager {
   _transitionEnd() {
     this._settings.band.style.setProperty('transition', 'transform .5s ease-in-out');
     this._moving = false;
+  }
+
+  _focusCardsByTab(e) {
+    if (this._parameters.movesNeeded > 1 && e.target.closest('.model-card') !== null && e.keyCode == 0x9) {
+      this._settings.band.style.setProperty('transition', 'transform .1s ease-in-out');
+      this._focused = e.target.closest('.model-card');
+      const cv = this._getFocusedCardNum();
+      const bandShift = Math.abs(+getComputedStyle(this._settings.band).transform.split(', ')[4]);
+      const leftCard = Math.floor(bandShift / this._parameters.moveLength);
+      const rightCard = Math.floor(bandShift / this._parameters.moveLength) + this._parameters.itemsPerScreen;
+      const leftAligned = bandShift % this._parameters.moveLength == 0;
+      const page = Math.floor((cv - 1) / (this._parameters.itemsPerScreen * this._parameters.rows));
+      const input = this._settings.ctrlDock.querySelectorAll('input')[page];
+      input.checked = true;
+      let anchor = 0;
+
+      if (leftAligned) {
+        if (cv > rightCard) {
+          anchor++;
+          this._swipInfo.dir = 1;
+        } else if (cv == leftCard) {
+          anchor = cv - 1;
+          this._swipInfo.dir = 1;
+        }
+      } else {
+        if (cv > rightCard) {
+          anchor = cv - this._parameters.itemsPerScreen;
+          this._swipInfo.dir = 1;
+        } else if (cv == leftCard + 1) {
+          anchor = rightCard - this._parameters.itemsPerScreen;
+          this._swipInfo.dir =  (cv == 1) ? -1 : 1;
+        } else if (cv < leftCard) {
+          anchor = cv - 1;
+          this._swipInfo.dir = -1;
+        }
+      }
+      //console.log(anchor, cv, leftCard, rightCard, leftAligned);
+
+      this._cardSelect(anchor);
+      this._swipInfo.dir = 0;
+      this._tmh = setTimeout(this._trend, 110);
+    }
   }
 
 }
